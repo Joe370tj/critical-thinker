@@ -1,0 +1,263 @@
+<!-- =============================
+File: styles.css
+Description: Site-wide styles (save as styles.css)
+============================= -->
+/* CSS Reset + Variables */
+:root{
+  --bg: #f7f8fb;
+  --bg-alt: #ffffff;
+  --text: #0f1a2b;
+  --muted: #5a6b85;
+  --primary: #004aad; /* Sanlam blue-ish */
+  --primary-contrast: #ffffff;
+  --border: #e1e6ef;
+  --card: #ffffff;
+  --shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+:root.dark{
+  --bg: #0b1220;
+  --bg-alt: #0e1626;
+  --text: #e6edf7;
+  --muted: #a7b3c9;
+  --primary: #4ea2ff;
+  --primary-contrast: #0b1220;
+  --border: #1e2a44;
+  --card: #0f192b;
+  --shadow: 0 10px 30px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.6;
+}
+img{max-width:100%; display:block}
+.container{width:min(1100px, 92%); margin-inline:auto}
+.section{padding:72px 0}
+.section.alt{background:var(--bg-alt)}
+.hero{padding:96px 0}
+
+/* Header */
+.site-header{position:sticky;top:0;background:var(--bg-alt);border-bottom:1px solid var(--border);z-index:50}
+.site-header[data-elevate]{box-shadow:var(--shadow)}
+.header-grid{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:14px 0}
+.brand{display:inline-flex;align-items:center;gap:10px;color:var(--text);text-decoration:none;font-weight:700}
+.logo{font-size:1.4rem}
+.brand-text{letter-spacing:.5px}
+.nav-toggle{display:none;background:none;border:none;font-size:1.4rem}
+.nav-list{display:flex;gap:14px;list-style:none;margin:0;padding:0}
+.nav-list a{color:var(--muted);text-decoration:none;padding:10px 8px;border-radius:12px}
+.nav-list a:hover{background:var(--border);color:var(--text)}
+.header-actions{display:flex;gap:10px;align-items:center}
+select, .input, textarea, input{border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:10px 12px;border-radius:12px;outline:none}
+
+/* Hero */
+.hero-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:24px;align-items:start}
+.lead{font-size:1.1rem;color:var(--muted)}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0;padding:0;list-style:none}
+.badges li{background:var(--border);padding:6px 10px;border-radius:999px;color:var(--text)}
+.hero-card .card{margin-bottom:14px}
+
+/* Grid & Cards */
+.grid{display:grid;gap:16px}
+.grid.two{grid-template-columns:1fr 1fr}
+.grid.three{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.stat{display:grid;gap:6px;justify-items:center}
+.stat-value{font-size:2rem;font-weight:800}
+.stat-label{color:var(--muted)}
+
+/* Lists */
+.feature-list, .check-list{list-style:none;padding:0;margin:0}
+.feature-list li{padding:8px 0;border-bottom:1px dashed var(--border)}
+.feature-list li:last-child{border-bottom:none}
+.check-list li::before{content:'✔';margin-right:.6rem}
+.numbered{counter-reset:ol; list-style:none; padding:0}
+.numbered li{counter-increment:ol; margin:8px 0}
+.numbered li::before{content:counter(ol)'. '; font-weight:700; color:var(--primary)}
+
+/* Timeline */
+.timeline{position:relative;margin:20px 0;padding-left:20px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding:10px 14px 10px 24px;border-left:2px solid transparent;transition:border-color .2s}
+.timeline-item::before{content:'';position:absolute;left:-2px;top:14px;width:10px;height:10px;border-radius:50%;background:var(--primary)}
+.timeline-item:hover{border-left-color:var(--primary)}
+.time{font-weight:700}
+
+/* Forms */
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.form-grid .full{grid-column:1/-1}
+.form-actions{display:flex;gap:10px;align-items:center}
+.input{width:100%}
+.muted{color:var(--muted)}
+.quiz-result{display:block;margin-top:12px;font-weight:700}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg-alt);color:var(--text);text-decoration:none;cursor:pointer}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--primary);color:var(--primary-contrast);border-color:transparent}
+.btn.ghost{background:transparent}
+
+/* Footer */
+.site-footer{border-top:1px solid var(--border);padding:24px 0;background:var(--bg-alt)}
+.footer-grid{display:grid;grid-template-columns:1fr auto;align-items:center}
+.footer-grid a{color:var(--muted);text-decoration:none;margin-left:14px}
+.footer-grid a:hover{color:var(--text)}
+
+/* Utilities */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.space-top{margin-top:10px}
+.skip-link{position:absolute;left:-9999px;top:auto}
+.skip-link:focus{left:10px;top:10px;background:var(--primary);color:var(--primary-contrast);padding:8px 10px;border-radius:10px;z-index:999}
+
+/* Responsive */
+@media (max-width: 900px){
+  .hero-grid{grid-template-columns:1fr}
+  .grid.two{grid-template-columns:1fr}
+  .grid.three{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .nav-toggle{display:inline-block}
+  .nav-list{position:fixed;inset:60px 0 auto 0;background:var(--bg-alt);padding:12px;border-bottom:1px solid var(--border);display:none;flex-direction:column}
+  .nav-list.open{display:flex}
+}
+
+
+/* =============================
+File: script.js
+Description: Site interactions (save as script.js)
+============================= */
+// Helper: by id
+const $ = (id) => document.getElementById(id);
+
+// Sticky header elevate on scroll
+const header = document.querySelector('.site-header');
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY || window.pageYOffset;
+  if (y > 10 && y > lastY) header.setAttribute('data-elevate','');
+  else if (y <= 10) header.removeAttribute('data-elevate');
+  lastY = y;
+});
+
+// Mobile nav toggle
+const navToggle = $('navToggle');
+const navMenu = $('navMenu');
+navToggle.addEventListener('click', () => {
+  const open = navMenu.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', String(open));
+});
+
+// Theme toggle with localStorage
+const themeToggle = $('themeToggle');
+const root = document.documentElement;
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') root.classList.add('dark');
+updateThemeIcon();
+
+themeToggle.addEventListener('click', () => {
+  root.classList.toggle('dark');
+  const mode = root.classList.contains('dark') ? 'dark' : 'light';
+  localStorage.setItem('theme', mode);
+  themeToggle.setAttribute('aria-pressed', mode === 'dark');
+  updateThemeIcon();
+});
+
+function updateThemeIcon(){
+  themeToggle.textContent = root.classList.contains('dark') ? '☀️' : '🌙';
+}
+
+// Language select (demo only)
+$('languageSelect').addEventListener('change', (e) => {
+  const lang = e.target.value;
+  // Demo: announce selection only
+  alert('Language switched to: ' + e.target.options[e.target.selectedIndex].text + ' (demo)');
+});
+
+// Stats counters (delight)
+function animateValue(el, to, duration=1200){
+  const start = 0; const startTime = performance.now();
+  function tick(now){
+    const p = Math.min(1, (now - startTime)/duration);
+    el.textContent = Math.round(start + (to - start) * p).toLocaleString();
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+animateValue($('statLearners'), 12500);
+animateValue($('statCourses'), 48300);
+
+// Search filter (marketing plan)
+const planSearch = $('planSearch');
+const planList = $('planList');
+planSearch.addEventListener('input', () => {
+  const q = planSearch.value.toLowerCase();
+  [...planList.children].forEach(li => {
+    const show = li.textContent.toLowerCase().includes(q);
+    li.style.display = show ? '' : 'none';
+  });
+});
+
+// Budget calculator
+const budgetForm = $('budgetForm');
+const resultsBox = $('budgetResults');
+budgetForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const income = parseFloat($('income').value)||0;
+  const needs = parseFloat($('needs').value)||0;
+  const wants = parseFloat($('wants').value)||0;
+  const debts = parseFloat($('debts').value)||0;
+  const savings = parseFloat($('savings').value)||0;
+  const expenses = needs + wants + debts + savings;
+  const balance = income - expenses;
+  const pct = (v) => income > 0 ? Math.round((v/income)*100) + '%' : '—';
+
+  $('resBalance').textContent = 'N$ ' + balance.toFixed(2);
+  $('resNeeds').textContent = pct(needs);
+  $('resWants').textContent = pct(wants);
+  $('resDebts').textContent = pct(debts);
+  $('resSavings').textContent = pct(savings);
+
+  let advice = [];
+  if (income <= 0) advice.push('Please enter your income.');
+  if ((needs/income) > 0.5) advice.push('Needs are above 50%. Look for essential expense cuts.');
+  if ((wants/income) > 0.3) advice.push('Wants are above 30%. Reduce non‑essentials.');
+  if ((savings/income) < 0.2) advice.push('Try to save at least 20% if possible.');
+  if (balance < 0) advice.push('You are overspending. Adjust expenses or increase income.');
+  $('resAdvice').textContent = advice.length ? advice.join(' ') : 'Nice work. Your plan looks balanced!';
+
+  resultsBox.hidden = false;
+});
+
+// Quiz logic
+const quizForm = $('quizForm');
+const quizResult = $('quizResult');
+const resetQuiz = $('resetQuiz');
+quizForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const answers = { q1:'b', q2:'b', q3:'a' };
+  const data = new FormData(quizForm);
+  let score = 0, total = 3;
+  Object.keys(answers).forEach(k=>{ if (data.get(k) === answers[k]) score++; });
+  quizResult.textContent = `You scored ${score}/${total}. ${score===total ? 'Excellent!' : score===2 ? 'Good job—review the misses.' : 'Keep learning, you got this!'}`;
+});
+resetQuiz.addEventListener('click', () => {
+  quizForm.reset();
+  quizResult.textContent = '';
+});
+
+// Contact form (demo)
+const contactForm = $('contactForm');
+const contactStatus = $('contactStatus');
+contactForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  contactStatus.textContent = 'Sending…';
+  setTimeout(()=>{
+    contactStatus.textContent = 'Thanks! We will reach out soon.';
+    contactForm.reset();
+  }, 800);
+});
+
+// Footer year
+$('year').textContent = new Date().getFullYear();
