@@ -80,6 +80,18 @@ function canSeeJob(user, job) {
 const loginLimiter = rateLimit({ windowMs: 15*60*1000, limit: 30, standardHeaders: true, legacyHeaders: false, message: {error:'Too many attempts. Please try again later.'} });
 
 app.get('/api/health', (req,res) => res.json({status:'ok', app:'SkillBridge AI', time:new Date().toISOString()}));
+app.post('/api/risk-check', (req,res) => {
+  const body=req.body||{}; const supplier=String(body.supplier||'').trim();
+  if(!supplier || supplier.length>120) return res.status(400).json({error:'Supplier name is required.'});
+  const weights={dataAccess:{none:0,internal:12,confidential:23,regulated:32},spend:{low:0,medium:8,high:14}};
+  let score=weights.dataAccess[body.dataAccess]??12; score+=weights.spend[body.spend]??8;
+  const controls=[['mfa','MFA is not confirmed for privileged access.'],['backup','Backup recovery testing is not confirmed.'],['incident','An incident response plan is not confirmed.'],['assurance','Independent security assurance is not confirmed.']];
+  const findings=controls.map(([key,text])=>body[key]?{positive:true,text:key==='mfa'?'Multi-factor authentication is in place.':key==='backup'?'Tested backups are in place.':key==='incident'?'Incident response planning is in place.':'Independent assurance evidence is available.'}:{positive:false,text});
+  score+=findings.filter(x=>!x.positive).length*13; score=Math.min(100,Math.max(0,score));
+  const tier=score<30?'Low':score<60?'Moderate':'High';
+  const recommendation=tier==='Low'?'Proceed with standard supplier due diligence and annual evidence refresh.':tier==='Moderate'?'Proceed with conditions: assign an owner and close the listed control gaps before renewal.':'Escalate for security review before onboarding or granting additional access.';
+  res.json({supplier,score,tier,recommendation,findings});
+});
 app.post('/api/auth/register', loginLimiter, async (req,res) => {
   try {
     const {name,email,password,role: userRole,area='',bio='',skills='',availability='Flexible',experience=''} = req.body || {};
