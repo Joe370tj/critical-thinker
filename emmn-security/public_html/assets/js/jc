@@ -1,0 +1,50 @@
+// assets/js/main.js
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('EMMN Security Solutions - Supply Chain Risk Checker loaded');
+
+    // Mobile menu toggle (optional enhancement)
+    const navLinks = document.querySelector('.nav-links');
+    if (navLinks) {
+        // Add responsive menu toggle if needed
+    }
+
+    // Form validation helper
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const inputs = this.querySelectorAll('input[required], textarea[required]');
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    valid = false;
+                    input.style.borderColor = '#dc3545';
+                } else {
+                    input.style.borderColor = '#d4af37';
+                }
+            });
+            if (!valid) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+            }
+        });
+    });
+
+    // Add animation to stat cards
+    const statNumbers = document.querySelectorAll('.stat-card .number');
+    statNumbers.forEach(stat => {
+        const originalText = stat.textContent;
+        if (!isNaN(parseInt(originalText))) {
+            let count = 0;
+            const target = parseInt(originalText);
+            const increment = target / 30;
+            const interval = setInterval(() => {
+                count += increment;
+                if (count >= target) {
+                    count = target;
+                    clearInterval(interval);
+                }
+                stat.textContent = Math.round(count);
+            }, 30);
+        }
+    });
+});
