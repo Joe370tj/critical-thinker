@@ -104,8 +104,17 @@ function isClient() {
  */
 function requireLogin() {
     if (!isLoggedIn()) {
-        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
-        redirect('admin/login.php');
+        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? '/';
+
+        // Keep client users in the client authentication flow. The previous
+        // implementation sent every unauthenticated visitor to the admin form,
+        // which made protected client pages appear broken and leaked an
+        // unnecessary admin entry point.
+        $requestPath = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
+        $loginPath = str_contains($requestPath, '/client/')
+            ? 'login.php'
+            : 'admin/login.php';
+        redirect($loginPath);
     }
 }
 
