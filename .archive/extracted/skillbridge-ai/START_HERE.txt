@@ -1,0 +1,21 @@
+SKILLBRIDGE AI - START HERE
+
+1. Install Node.js 20 or newer from https://nodejs.org.
+2. Extract the complete ZIP folder to a normal writable location.
+3. Open the extracted skillbridge-ai folder.
+4. On Windows, right-click inside the folder and choose Open in Terminal, then run:
+      .\run-local.ps1
+   If your PowerShell policy blocks scripts, use these commands instead:
+      Copy-Item .env.example .env
+      npm install
+      npm test
+      npm start
+5. Open http://localhost:3000 in your browser.
+6. Check http://localhost:3000/api/health. It should return JSON with status "ok".
+
+First-time setup needs internet access for npm install. Keep the terminal open while using the site.
+The local SQLite database is stored at backend/skillbridge.db. Do not delete it if you want to keep user and job data.
+
+To create an administrator, follow the protected one-time setup instructions in README.md. Remove ADMIN_SETUP_KEY after creating the admin.
+
+IMPORTANT: The ZIP contains the source for a runnable MVP, not a hosted website. You must run it locally or deploy it to a server. Run npm test before use. The checks validate syntax and project files but do not replace full runtime, browser, security, or production testing. Do not put real secrets in shared files or publish without HTTPS, backups, and a security/privacy review.
