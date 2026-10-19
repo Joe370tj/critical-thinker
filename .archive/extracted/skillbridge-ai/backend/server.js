@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE,
  password_hash TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('client','worker','admin')),
  area TEXT DEFAULT '', bio TEXT DEFAULT '', skills TEXT DEFAULT '', availability TEXT DEFAULT 'Flexible',
- experience TEXT DEFAULT '', status TEXT NOT NULL DEFAULT 'active', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+ experience TEXT DEFAULT '', profile_image TEXT DEFAULT '', status TEXT NOT NULL DEFAULT 'active', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS jobs (
  id INTEGER PRIMARY KEY AUTOINCREMENT, client_id INTEGER NOT NULL REFERENCES users(id),
@@ -58,8 +58,9 @@ CREATE TABLE IF NOT EXISTS audit_log (
  target_type TEXT NOT NULL, target_id INTEGER, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 `);
+try { db.exec("ALTER TABLE users ADD COLUMN profile_image TEXT DEFAULT ''"); } catch (e) { if (!String(e.message).includes('duplicate column name')) throw e; }
 
-const safeUser = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role, area: u.area || '', bio: u.bio || '', skills: u.skills || '', availability: u.availability || 'Flexible', experience: u.experience || '', status: u.status });
+const safeUser = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role, area: u.area || '', bio: u.bio || '', skills: u.skills || '', availability: u.availability || 'Flexible', experience: u.experience || '', profile_image: u.profile_image || '', status: u.status });
 function auth(req, res, next) {
   const h = req.headers.authorization || '';
   if (!h.startsWith('Bearer ')) return res.status(401).json({ error: 'Please sign in to continue.' });
@@ -103,7 +104,8 @@ app.post('/api/auth/login', loginLimiter, async (req,res) => {
 });
 app.get('/api/me',auth,(req,res)=>res.json({user:safeUser(req.user)}));
 app.patch('/api/me',auth,(req,res)=>{
-  const fields=['name','area','bio','skills','availability','experience']; const updates=[]; const values=[];
+  const fields=['name','area','bio','skills','availability','experience','profile_image']; const updates=[]; const values=[];
+  if (req.body.profile_image && (!/^data:image\/(png|jpeg|jpg|webp);base64,/.test(String(req.body.profile_image)) || String(req.body.profile_image).length > 2_100_000)) return res.status(400).json({error:'Use a PNG, JPG, or WebP image smaller than 1.5 MB.'});
   for(const f of fields) if(req.body[f] !== undefined){ updates.push(`${f}=?`); values.push(String(req.body[f]).slice(0, f==='bio'?800:500)); }
   if(!updates.length) return res.json({user:safeUser(req.user)});
   values.push(req.user.id); db.prepare(`UPDATE users SET ${updates.join(',')} WHERE id=?`).run(...values);
@@ -111,7 +113,7 @@ app.patch('/api/me',auth,(req,res)=>{
 });
 
 app.get('/api/workers', (req,res)=>{
- const {q='',area=''}=req.query; let sql=`SELECT u.id,u.name,u.area,u.bio,u.skills,u.availability,u.experience, COALESCE(AVG(r.rating),0) rating, COUNT(r.id) review_count FROM users u LEFT JOIN reviews r ON r.reviewee_id=u.id WHERE u.role='worker' AND u.status='active'`;
+ const {q='',area=''}=req.query; let sql=`SELECT u.id,u.name,u.area,u.bio,u.skills,u.availability,u.experience,u.profile_image, COALESCE(AVG(r.rating),0) rating, COUNT(r.id) review_count FROM users u LEFT JOIN reviews r ON r.reviewee_id=u.id WHERE u.role='worker' AND u.status='active'`;
  const args=[]; if(q){sql+=' AND (u.skills LIKE ? OR u.bio LIKE ?)';args.push(`%${q}%`,`%${q}%`)} if(area){sql+=' AND u.area LIKE ?';args.push(`%${area}%`)} sql+=' GROUP BY u.id ORDER BY rating DESC, u.created_at DESC LIMIT 100'; res.json({workers:db.prepare(sql).all(...args)});
 });
 app.get('/api/jobs',(req,res)=>{
