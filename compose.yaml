@@ -1,0 +1,16 @@
+services:
+  skillbridge:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in your environment}
+      ADMIN_SETUP_KEY: ${ADMIN_SETUP_KEY:-}
+      DB_PATH: /app/backend/data/skillbridge.db
+    volumes:
+      - skillbridge_data:/app/backend/data
+    restart: unless-stopped
+volumes:
+  skillbridge_data:
