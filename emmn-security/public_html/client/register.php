@@ -9,6 +9,9 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Your session expired. Please refresh and try again.';
+    } else {
     $username = sanitize($_POST['username'] ?? '');
     $email = sanitize($_POST['email'] ?? '');
     $full_name = sanitize($_POST['full_name'] ?? '');
@@ -47,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -70,7 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="alert alert-success"><?php echo e($success); ?></div>
                 <p><a href="login.php" class="btn-gold">Go to Login</a></p>
             <?php else: ?>
-            <form method="POST">
+            <form method="POST" autocomplete="on">
+                <input type="hidden" name="csrf_token" value="<?php echo e(generateCSRFToken()); ?>">
                 <div class="form-group">
                     <input type="text" name="full_name" placeholder="Full Name *" required value="<?php echo e($_POST['full_name'] ?? ''); ?>">
                 </div>

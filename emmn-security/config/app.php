@@ -31,6 +31,7 @@ if (session_status() === PHP_SESSION_NONE) {
     // development usable.
     ini_set('session.cookie_secure', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 1 : 0);
     ini_set('session.cookie_samesite', 'Lax');
+    ini_set('session.use_strict_mode', 1);
     ini_set('session.gc_maxlifetime', 1800); // 30 minutes
 
     session_start();

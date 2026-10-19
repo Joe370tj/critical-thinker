@@ -11,6 +11,9 @@ if (isLoggedIn()) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Your session expired. Please refresh and try again.';
+    } else {
     $username = sanitize($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     
@@ -22,6 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = getUserByUsernameOrEmail($username);
         
         if ($user && verifyPassword($password, $user['password'])) {
+            if (password_needs_rehash($user['password'], PASSWORD_BCRYPT, ['cost' => 12])) {
+                dbUpdate('users', ['password' => hashPassword($password)], 'id = ?', [$user['id']]);
+            }
             if ($user['role'] !== 'client') {
                 $error = 'Please use the Admin login for admin accounts.';
             } else {
@@ -34,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             logFailedLogin($username);
             $error = 'Invalid username or password.';
         }
+    }
     }
 }
 ?>
@@ -54,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if ($error): ?>
                 <div class="alert alert-error"><?php echo e($error); ?></div>
             <?php endif; ?>
-            <form method="POST">
+            <form method="POST" autocomplete="on">
+                <input type="hidden" name="csrf_token" value="<?php echo e(generateCSRFToken()); ?>">
                 <div class="form-group">
                     <input type="text" name="username" placeholder="Username or Email" required value="<?php echo e($_POST['username'] ?? ''); ?>">
                 </div>
